@@ -291,25 +291,5 @@ if noms_manquants:
     print(f"  [AVERT] Noms absents en base : {noms_manquants}")
 else:
     print(f"  [OK] Les {len(noms_csv)} patients du CSV sont tous en base")
-
-# ==== 9. EXPORT JSON ==== 
-print("\n--- Export JSON ---")
-
-tous_les_docs = list(collection.find({}, {"_id": 0}))
-
-# Les datetime ne sont pas sérialisables nativement, on les convertit en string
-def convertir_datetime(obj):
-    if isinstance(obj, datetime):
-        return obj.isoformat()
-    raise TypeError(f"Type non sérialisable : {type(obj)}")
-
-with open(EXPORT_PATH, "w", encoding="utf-8") as fichier:
-    json.dump(tous_les_docs, fichier, ensure_ascii=False, indent=2, default=convertir_datetime)
-
-print(f"  Export terminé → {EXPORT_PATH} ({len(tous_les_docs)} documents)")
-
-print("\n=== MIGRATION TERMINÉE ===")
-print(f"  Documents en base : {collection.count_documents({})}")
-print(f"  Base              : {DB_NAME}.{COL_NAME}")
-
+    
 client.close()
