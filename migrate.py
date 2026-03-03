@@ -113,7 +113,7 @@ print("\n--- Nettoyage ---")
 
 # Supprimer les espaces dans les noms de colonnes et les valeurs texte
 df.columns = df.columns.str.strip()
-for col in df.select_dtypes("object").columns:
+for col in df.select_dtypes("str").columns:
     df[col] = df[col].str.strip()
 
 # Supprimer les doublons
