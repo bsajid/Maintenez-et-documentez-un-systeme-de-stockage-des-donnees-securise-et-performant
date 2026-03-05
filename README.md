@@ -86,11 +86,6 @@ P5/
 
 - Python 3.11
 - MongoDB installé et lancé en local
-- Installer les dépendances Python :
-
-```bash
-pip install -r requirements.txt
-```
 
 ### Lancer la migration
 
