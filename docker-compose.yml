@@ -1,17 +1,3 @@
-# ==== docker-compose.yml ====
-
-# Ce fichier orchestre plusieurs conteneurs Docker
-# en même temps et les fait communiquer entre eux.
-#
-# Ici on a 2 conteneurs :
-#   1. mongodb   → la base de données
-#   2. migration → le script Python qui lit le CSV
-#                  et insère les données dans MongoDB
-#
-# Et 2 volumes :
-#   - mongo_data → stocke les données MongoDB
-#   - csv_data   → stocke le fichier CSV source
-
 version: "3.9"
 
 services:
