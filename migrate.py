@@ -5,7 +5,6 @@ Migration des données médicales CSV -> MongoDB.
 """
 
 import os
-import json
 import pandas as pd
 from datetime import datetime
 from pymongo import MongoClient
