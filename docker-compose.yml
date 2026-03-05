@@ -30,9 +30,9 @@ services:
       MONGO_URI: mongodb://mongodb:27017/
       MONGO_DB: medical_db
       MONGO_COLLECTION: patients
-      CSV_PATH: /data/medical_data.csv
+      CSV_PATH: /data/medical_data.csv 
     volumes:
-      - ./data:/data  # Le dossier local data/ est monté dans le conteneur
+      - ./data:/data  # Le dossier local ./data est monté directement dans le conteneur
     restart: "no"  # Le conteneur s'arrête une fois la migration terminée
 
 volumes:
