@@ -1,0 +1,10 @@
+# Variables d'environnement sensibles — NE JAMAIS commiter
+.env
+
+# Dossier data (fichiers CSV volumineux)
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
