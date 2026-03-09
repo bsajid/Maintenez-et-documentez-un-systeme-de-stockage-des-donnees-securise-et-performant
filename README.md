@@ -217,3 +217,21 @@ root_admin        →  accès total (toutes les bases)
 
 Les mots de passe ne sont **jamais** écrits directement dans le code. Ils sont dans un fichier `.env` 
  Ce fichier est dans `.gitignore` : il ne sera **jamais envoyé sur GitHub**.
+
+## Partie 4 — Gestion des branches GitHub
+
+### Pourquoi plusieurs branches ?
+
+Chaque fonctionnalité est développée dans sa propre branche. Cela permet de :
+- Travailler sur plusieurs choses en parallèle sans casser le code principal
+- Relire et valider les changements avant de les intégrer (Pull Request)
+- Garder un historique clair de qui a fait quoi
+
+### Organisation des branches
+
+```
+main               ← code stable, validé, en production
+└── develop        ← intégration de toutes les features
+    ├── feature/migration  ← script migrate.py + CSV
+    └── feature/docker     ← Dockerfile + docker-compose + auth
+```
