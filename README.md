@@ -71,11 +71,14 @@ Document "patient"
 ```
 P5/
 ├── data/
-│   ├── medical_data.csv          # Dataset source
+│   └── medical_data.csv          # Dataset source (non commité sur GitHub)
 ├── migrate.py                    # Script de migration
 ├── requirements.txt              # Dépendances Python
-├── Dockerfile            		  # Dockerfile
+├── Dockerfile                    # Dockerfile
 ├── docker-compose.yml            # docker-compose
+├── mongo-init.js                 # Création des utilisateurs MongoDB
+├── .env                          # Mots de passe (non commité sur GitHub)
+├── .gitignore                    # Fichiers exclus de GitHub
 └── README.md                     # Ce fichier
 ```
 
@@ -95,15 +98,20 @@ python migrate.py
 
 ### Ce que fait le script
 
-1. Se connecte à MongoDB en local (`mongodb://localhost:27017/`)
-2. Lit le fichier `data/medical_data.csv`
-3. Vérifie que les données sont correctes (colonnes présentes, doublons, domaine Gender, domaine Blood Type ...)
-4. Nettoie et type (supprimer les espaces colonnes, supprimer les doublons, typage des colonnes)
-5. Insère les données dans la collection `patients` de la base `medical_db` sur **MongoDB**
-6. Crée des index pour accélérer les recherches
-7. Vérifie que tout a bien été inséré (**Démonstration CRUD**)
-8. Tests d'intégrité dans MongoDB (Nbr de documents en base, Aucun doublon, les 7 index sont créer ...)
+Le script est découpé en **2 fonctions** :
 
+**`lire_csv(chemin_csv)`**
+1. Lit le fichier `data/medical_data.csv`
+2. Vérifie les colonnes, les doublons, les domaines (Gender, Blood Type, etc.)
+3. Nettoie et type les données
+4. Retourne un DataFrame propre
+
+**`migrer_mongodb(df, ...)`**
+1. Se connecte à MongoDB avec authentification (username + password + rôle)
+2. Insère les données dans la collection `patients` de la base `medical_db`
+3. Crée les 7 index pour accélérer les recherches
+4. Effectue une démonstration CRUD (Create / Read / Update / Delete)
+5. Vérifie l'intégrité des données en base
 ---
 ### Visualiser les données avec MongoDB Compass
 
@@ -176,3 +184,36 @@ docker-compose logs migration
 ```bash
 docker-compose down
 ```
+## Partie 3 — Authentification et sécurité
+
+### Pourquoi sécuriser ?
+
+Sans authentification, n'importe qui ayant accès au réseau peut lire ou modifier les données médicales. MongoDB propose un système de **comptes + rôles** pour contrôler précisément qui peut faire quoi.
+
+### Les 3 comptes et leurs rôles
+
+| # | Compte | Rôle MongoDB | Peut faire | Utilisé par |
+|---|---|---|---|---|
+| 1 | `root_admin` | `root` | Tout (toutes les bases) | Administration uniquement |
+| 2 | `read_write_user` | `readWrite` + `dbAdmin` | Lire, écrire, créer des index dans `medical_db` | Script de migration |
+| 3 | `read_only_user` | `read` | Lire uniquement dans `medical_db` | MongoDB Compass / consultation |
+
+> Le principe du **moindre privilège** : chaque compte n'a que les droits dont il a besoin, rien de plus.
+
+### Schéma des accès
+
+```
+root_admin        →  accès total (toutes les bases)
+                         │
+                    medical_db
+                    ┌────┴────┐
+         read_write_user   read_only_user
+         (lire + écrire)   (lire seulement)
+              │
+        migrate.py
+```
+
+### Fichier .env — stocker les mots de passe
+
+Les mots de passe ne sont **jamais** écrits directement dans le code. Ils sont dans un fichier `.env` 
+ Ce fichier est dans `.gitignore` : il ne sera **jamais envoyé sur GitHub**.
